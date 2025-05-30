@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello2, ${{ github.event.inputs.name }}!"
+        run: echo "Hello2, ${{ needs.hello.result }}!"
 
   failure:
     needs: hello
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello3, ${{ github.event.inputs.name }}!"
+        run: echo "Hello3, ${{ needs.hello.result }}!"
 
   cancelled:
     needs: hello
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello4, ${{ github.event.inputs.name }}!"
+        run: echo "Hello4, ${{ needs.hello.result }}!"
 
   always:
     needs: hello
@@ -46,4 +46,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello4, ${{ github.event.inputs.name }}!"
+        run: echo "Hello4, ${{ needs.hello.result }}!"
