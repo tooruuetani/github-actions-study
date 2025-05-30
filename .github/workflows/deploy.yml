@@ -12,6 +12,7 @@ env:
 
 jobs:
   deploy:
+    if: ${{ github.event.pull_request.merged == true }}
     env:
       FUNCTION_NAME: "pescle-insects-api-external"
       WORKDIR: backend
