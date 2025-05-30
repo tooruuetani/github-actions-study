@@ -3,12 +3,37 @@ on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'Name to greet'
+        description: "Name to greet"
         required: true
-        default: 'World'
+        default: "World"
 jobs:
   hello:
+    if: inputs.name == 'World'
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello, ${{ github.event.inputs.name }}!"
+        run: echo "Hello1, ${{ github.event.inputs.name }}!"
+
+  hello2:
+    needs: hello
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet
+        run: echo "Hello2, ${{ github.event.inputs.name }}!"
+
+  hello3:
+    needs: hello
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet
+        run: echo "Hello3, ${{ github.event.inputs.name }}!"
+
+  hello4:
+    needs: hello
+    if: cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet
+        run: echo "Hello4, ${{ github.event.inputs.name }}!"
