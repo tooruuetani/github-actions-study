@@ -8,11 +8,13 @@ on:
         default: "World"
 jobs:
   hello:
-    if: inputs.name == 'World'
+    if: startsWith(inputs.name, 'World')
     runs-on: ubuntu-latest
     steps:
       - name: Greet
         run: echo "Hello1, ${{ github.event.inputs.name }}!"
+      - if: endsWith(inputs.name, 'END')
+        run: exit 1
 
   success:
     needs: hello
