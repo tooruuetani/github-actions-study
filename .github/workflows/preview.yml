@@ -1,0 +1,27 @@
+name: preview
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      FUNCTION_NAME: lambda-api-external
+      STAGE: dev
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          VERSION=$(head -n 1 VERSION_API)
+          VERSION=`echo ${VERSION} | sed -e "s/[\r\n]\+//g"`
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: ./.github/actions/update-lambda
+        with:
+          alias: ${{ steps.version.outputs.version }}
+          function_name: ${{ env.FUNCTION_NAME }}
+          stage: ${{ env.STAGE }}
+          tfstate_url: "s3://dummy/${{ env.STAGE }}.tfstate"
+          workdir: "backend/lambroll"

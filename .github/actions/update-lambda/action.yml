@@ -1,0 +1,32 @@
+name: "Update lambda function"
+description: "Update lambda function"
+inputs:
+  alias:
+    description: "lambda function alias, defaults to stage"
+    required: false
+  function_name:
+    description: "lambda function name"
+  stage:
+    description: "Stage for deployment"
+  tfstate_url:
+    description: "URL of tfstate"
+  workdir:
+    description: "Working directory to execute lambroll"
+runs:
+  using: "composite"
+  steps:
+    - name: Install lambroll
+      uses: fujiwara/lambroll@v1
+      with:
+        version: v1.1.3
+    - name: Update lambda functions
+      working-directory: ${{ inputs.workdir }}
+      env:
+        ALIAS: ${{ inputs.alias }}
+        FUNCTION_NAME: ${{ inputs.function_name }}
+        STAGE: ${{ inputs.stage }}
+      run: |
+        ALIAS=${ALIAS:-$STAGE}
+        FUNCTION_FILE=${FUNCTION_NAME//-${STAGE}/}.json
+        echo lambroll deploy --function $FUNCTION_FILE --alias=$ALIAS --keep-versions=5 --envfile=$STAGE.env --tfstate=${{ inputs.tfstate_url }}
+      shell: bash
