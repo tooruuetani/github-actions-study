@@ -1,0 +1,35 @@
+name: release
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - release/dev/api-*
+      - release/prod/api-*
+
+jobs:
+  deploy:
+    if: ${{ github.event.pull_request.merged == true }}
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version from VERSION_API
+        id: version
+        run: |
+          VERSION=$(head -n 1 VERSION_API)
+          VERSION=`echo ${VERSION} | sed -e "s/[\r\n]\+//g"`
+          echo "version_api=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+      - uses: ./.github/actions/update-lambda
+        with:
+          alias: ${{ steps.version.outputs.version_api }}
+          function_name: dummy-lambda
+          stage: ${{ github.event.pull_request.base.ref }}
+          tfstate_url: "s3://dummy/infrastructure.tfstate"
+          workdir: "backend/lambroll"
+      - run: |
+          echo "tag=${{ github.event.pull_request.base.ref }}-api-${{ steps.version.outputs.version_api }}"
+      - uses: ./.github/actions/comment
+        with:
+          message: "Deploy api-${{ steps.version.outputs.version_api }} succeeded."
