@@ -14,7 +14,7 @@ jobs:
       - name: Greet
         run: echo "Hello1, ${{ github.event.inputs.name }}!"
 
-  hello2:
+  success:
     needs: hello
     if: success()
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
       - name: Greet
         run: echo "Hello2, ${{ github.event.inputs.name }}!"
 
-  hello3:
+  failure:
     needs: hello
     if: failure()
     runs-on: ubuntu-latest
@@ -30,9 +30,17 @@ jobs:
       - name: Greet
         run: echo "Hello3, ${{ github.event.inputs.name }}!"
 
-  hello4:
+  cancelled:
     needs: hello
     if: cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Greet
+        run: echo "Hello4, ${{ github.event.inputs.name }}!"
+
+  always:
+    needs: hello
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Greet
